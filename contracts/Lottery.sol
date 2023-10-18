@@ -24,6 +24,7 @@ contract Lottery {
 //    function generateRandomCode() private view returns (uint32) {
 //        return uint32(uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % 1000000);
 //    }
+
     function generateRandomCode() private view returns (uint32) {
         uint256 seed = uint256(block.timestamp);
 //        uint32 randomValue = vrf.getRandomNumber(seed);
