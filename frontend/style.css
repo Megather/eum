@@ -1,0 +1,21 @@
+body, button, input, select, textarea {
+    font-family: 'Open Sans', sans-serif;
+    padding: 20px;
+}
+button, input, select, textarea {
+}
+h1, h2, h3 {
+    font-weight: 600;
+}
+
+p {
+    font-size: 16px;
+}
+.header{
+    background-color: #efefef;
+    margin-left: -20px;
+    margin-right: -20px;
+    margin-top: -20px;
+    padding: 20px;
+
+}

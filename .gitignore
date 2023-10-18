@@ -1,0 +1,6 @@
+frontend/package-lock.json
+frontend/node_modules
+frontend/dist
+frontend/.parcel-cache
+.idea
+build
