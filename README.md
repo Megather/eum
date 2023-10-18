@@ -1,4 +1,4 @@
-# Mega Million Lottery on Ethereum
+git # Mega Million Lottery on Ethereum
 
 Welcome to the Mega Million Lottery project, a decentralized lottery system built on the Ethereum blockchain. This
 project aims to provide a secure and transparent lottery experience using Ethereum smart contracts. Players can
