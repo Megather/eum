@@ -12,7 +12,10 @@ contract Migrations {
     modifier restricted() {
         if (msg.sender == owner) _;
     }
+    function getOwner()public view returns(address){
+        return owner;
 
+    }
     function setCompleted(uint completed) public restricted {
         last_completed_migration = completed;
     }
