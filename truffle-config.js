@@ -11,7 +11,7 @@ module.exports = {
     mocha: {},
     compilers: {
         solc: {
-            version: "0.5.1"
+            version: "0.8.13"
     
         }
     }
