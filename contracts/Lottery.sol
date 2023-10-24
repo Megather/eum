@@ -56,10 +56,10 @@ contract Lottery is Ownable{
         require(chestBalance > 0, "The chest is empty. No game to run.");
 
         uint32 winnerIndex = uint32(random(index));
-        TokenData memory WinnerCandidate = tokensByToken[allTokens[winnerIndex]];
-        winnerToken = Winner(WinnerCandidate.userAddress, WinnerCandidate.token, chestBalance);
+        TokenData memory WinnerCondidaite = tokensByToken[allTokens[winnerIndex]];
+        winnerToken = Winner(WinnerCondidaite.userAddress, WinnerCondidaite.token, chestBalance);
         emit WinnerAnnounced(winnerToken);
-        payable(WinnerCandidate.userAddress).transfer(chestBalance);
+        payable(WinnerCondidaite.userAddress).transfer(chestBalance);
         chestBalance = 0;
         return winnerToken;
     }
