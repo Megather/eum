@@ -1,4 +1,5 @@
 <html>
+
 <head>
     <title>Blockchain mega millions lottery</title>
     <meta charset="utf-8">
@@ -6,18 +7,30 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap">
     <link rel="stylesheet" href="./style.css">
 </head>
-<body>
-<h2 class="header">Welcome to Blockchain mega millions lottery</h2>
-<p id="toast"></p>
-<div style="display: flex;flex-direction: row">
-    <div>
-        <md-filled-button id="connect-wallet">Connect to wallet</md-filled-button>
-    </div>
-    <div>
-        <md-filled-button color="green" id="buy-token" style=" --md-sys-color-primary:#127733">Buy lottery token</md-filled-button>
-    </div>
-</div>
 
+<body>
+    <h2 class="header">Welcome to Blockchain mega millions lottery</h2>
+    <p id="toast"></p>
+    <div style="display: flex;flex-direction: column;">
+
+        <div style="display: flex;flex-direction: row">
+            <div>
+                <md-filled-button id="connect-wallet">Connect to wallet</md-filled-button>
+            </div>
+            <div>
+                <md-filled-button color="green" id="buy-token" style=" --md-sys-color-primary:#127733">Buy lottery token</md-filled-button>
+            </div>
+        </div>
+        <div>
+            <h2>Your purchased tokens</h2>
+            <ui id="token-list-view"></ui>
+        </div>
+        <div>
+            <h2>Previous lottery winners</h2>
+            <ui id="previous-winner-view"></ui>
+        </div>
+    </div>
 </body>
 <script type="module" src="./index.js"></script>
+
 </html>

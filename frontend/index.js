@@ -3,13 +3,15 @@ import '@material/web/button/outlined-button.js';
 import '@material/web/checkbox/checkbox.js';
 
 const toast = document.getElementById('toast');
+const tokenListView=document.getElementById('token-list-view');
+const previousWinnerView=document.getElementById('previous-winner-view');
 const Web3 = require('web3');
 let web3 = null;
 let account = null;
 const LotteryContract = require('../build/contracts/Lottery.json'); // comment after deploying
 const contractABI = LotteryContract?.abi; // comment after deploying
 
-const contractAddress = '0x5A05601b2Fb787411D1Ca5458438B575ae74f30d'; // change after deploying
+const contractAddress = '0x10A81645A200abDf6D9F8Ca03b376AC720E48940'; // change after deploying
 
 //click handlers
 document.getElementById('connect-wallet').addEventListener('click', connectToWallet);
@@ -21,14 +23,15 @@ function connectToWallet() {
     if (typeof window["ethereum"] !== 'undefined') {
         web3 = new Web3(window["ethereum"]);
         window["ethereum"]
-            .request({method: 'eth_requestAccounts'})
+            .request({ method: 'eth_requestAccounts' })
             .then(function (accounts) {
                 account = accounts[0];
                 web3.eth.defaultAccount = account;
                 toast.style.color = "#000000";
                 toast.textContent = account;
                 document.getElementById('connect-wallet').style.display = 'none';
-                console.log('Connected wallet address:', account);
+                ListMyTickets();
+                previousWinner();
             })
             .catch(function (error) {
                 toast.style.color = "#ff0000";
@@ -45,26 +48,29 @@ function connectToWallet() {
 }
 
 
-function buyLotteryTicket() {
+async function buyLotteryTicket() {
     if (web3 == null || account == null) {
         toast.style.color = "#ff0000";
         toast.textContent = "Please connect to a wallet first";
         return undefined;
     }
     const contract = new web3.eth.Contract(contractABI, contractAddress);
-
-    const gasPrice = '1000000000';
-    const gasLimit = 200000;
-    contract.methods.buyLotteryTicket().send({
+    const gasPrice = await web3.eth.getGasPrice();
+    const gasLimit = await contract.methods.buyLotteryToken().estimateGas({
+        from: account,
+        value: web3.utils.toWei("0.01", "ether")
+    });
+    contract.methods.buyLotteryToken().send({
         from: account,
         value: web3.utils.toWei("0.01", "ether"),
-        gas: gasLimit,
         gasPrice: gasPrice,
+        gasLimit: gasLimit
     })
         .then(function (receipt) {
             console.log(receipt);
             toast.style.color = "#000000";
             toast.textContent = "Transaction successful";
+            ListMyTickets();
         })
         .catch(function (error) {
             console.error(error);
@@ -76,22 +82,53 @@ function buyLotteryTicket() {
 }
 
 
-function ListAllTickets() {
+function ListMyTickets() {
+    console.log('Listing my tickets...')
     if (web3 == null || account == null) {
         toast.style.color = "#ff0000";
         toast.textContent = "Please connect to a wallet first";
         return undefined;
     }
     const contract = new web3.eth.Contract(contractABI, contractAddress);
-    contract.methods.getOwner().call({from: account})
+    contract.methods.listMyTokens().call({ from: account })
         .then(function (receipts) {
-            toast.style.color = "#000000";
-            toast.textContent = `<ul>`;
+            console.log(receipts);
+            tokenListView.innerHTML = "";           
             for (let i = 0; i < receipts.length; i++) {
-                toast.textContent += `<li>receipts[i]?.lotteryTicket</li>`;
+                tokenListView.innerHTML += `<li>${receipts[i]}</li>`;
             }
-            toast.textContent = `</ul>`;
         })
+        .catch(function (error) {
+            console.error(error);
+         
+        });
+}
+function previousWinner() {
+    if (web3 == null || account == null) {
+        toast.style.color = "#ff0000";
+        toast.textContent = "Please connect to a wallet first";
+        return undefined;
+    }
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
+    contract.methods.getWinner().call({ from: account })
+        .then(function (winner) {
+            if(!winner?.amount||winner?.amount==0){
+                previousWinnerView.innerHTML = "";           
+                previousWinnerView.innerHTML += `<p>No previous winner</p>`;
+                return;
+            }
+            const amountInEth = web3.utils.fromWei(winner.amount, 'ether');
+
+            previousWinnerView.innerHTML = "";           
+            previousWinnerView.innerHTML += `<li><b>Prize</b> ${amountInEth} ETH</li>`;
+            previousWinnerView.innerHTML += `<li><b>Wallet address</b> ${winner.userAddress}</li>`;
+            previousWinnerView.innerHTML += `<li><b>Token</b> ${winner.token}</li>`;
+        })
+        .catch(function (error) {
+            console.error(error);
+         
+        });
+
 }
 
 window.addEventListener('load', function () {
