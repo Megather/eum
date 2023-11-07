@@ -4,3 +4,4 @@ frontend/dist
 frontend/.parcel-cache
 .idea
 build
+*.bkp

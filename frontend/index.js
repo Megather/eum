@@ -1,87 +1,185 @@
 import '@material/web/button/filled-button.js';
 import '@material/web/button/outlined-button.js';
 import '@material/web/checkbox/checkbox.js';
-const Web3 = require('web3');
-const LotteryContract = require('../build/contracts/Lottery.json');
-const contractABI = LotteryContract?.abi;
-const contractAddress = "0xA68c8D53aDd4b149C448e459C32d1BfBAcdb4652"//LotteryContract.networks[5777].address;
 
 const toast = document.getElementById('toast');
-const tokenListView = document.getElementById('token-list-view');
-const previousWinnerView = document.getElementById('previous-winner-view');
+const tokenListView=document.getElementById('token-list-view');
+const previousWinnerView=document.getElementById('previous-winner-view');
+const Web3 = require('web3');
+let web3 = null;
+let account = null;
+const LotteryContract = require('../build/contracts/Lottery.json'); // comment after deploying
+const contractABI = LotteryContract?.abi; // comment after deploying
 
+const contractAddress = "0xA68c8D53aDd4b149C448e459C32d1BfBAcdb4652"; // change after deploying
+// const contractAddress=LotteryContract.networks[5777].address
+//click handlers
 document.getElementById('connect-wallet').addEventListener('click', connectToWallet);
 document.getElementById("disconnect-wallet").addEventListener('click', disconnectWallet);
 document.getElementById('buy-token').addEventListener('click', buyLotteryTicket);
 
-connectToWallet()
-async function connectToWallet() {
-    if (window.ethereum) {
 
-        try {
-            let data = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            window.web3 = new Web3(window.ethereum);
-            window.contract = new  window.web3.eth.Contract(contractABI, contractAddress)
-            window.account =window.web3.eth.defsultAccount = data[0];
+function connectToWallet() {
+    console.log('Connecting to wallet...')
+    if (typeof window["ethereum"] !== 'undefined') {
+        web3 = new Web3(window["ethereum"]);
+        if (!account) {
+            window["ethereum"]
+                .request({ method: 'eth_requestAccounts' })
+                .then(function (accounts) {
+                    account = accounts[0];
+                    web3.eth.defaultAccount = account;
+                    toast.style.color = "#000000";
+                    toast.textContent = account;
+                    document.getElementById('connect-wallet').style.display = 'none';
+                    document.getElementById('disconnect-wallet').style.display = 'block';
+                    ListMyTickets();
+                    previousWinner();
+                })
+                .catch(function (error) {
+                    toast.style.color = "#ff0000";
+                    toast.textContent = error;
+                    console.error('Error getting wallet address:', error);
+                });
+        } else {
+            toast.style.color = "#000000";
+            toast.textContent = account;
             document.getElementById('connect-wallet').style.display = 'none';
             document.getElementById('disconnect-wallet').style.display = 'block';
-            toast.style.color = "#000000";
-            toast.textContent =data[0];
-
-        } catch (error) {
-            console.error(error);
-
-
+            ListMyTickets();
+            previousWinner();
         }
-
-        return true;
+    } else {
+        toast.style.color = "#ff0000";
+        toast.textContent = "Please install MetaMask to use this dApp";
+        console.error('MetaMask not detected');
     }
-    return false;
-
 }
-
 function disconnectWallet() {
-    if (window.web3) {
-        try {
-            document.getElementById('connect-wallet').style.display = 'block';
-            document.getElementById('disconnect-wallet').style.display = 'none';
-            window.web3 = null;
-            toast.textContent = "Wallet disconnected";
-            window.contract = null;
-        } catch (error) {
-            console.error(error);
-        }
-
-        return true;
-    }
-    return false;
-
+    // if (typeof window["ethereum"] !== 'undefined') {
+    //     window["ethereum"]
+    //         .request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] })
+    //         .then(function (permissions) {
+    //             window["ethereum"]
+    //                 .request({ method: 'wallet_removePermissions', params: [{ eth_accounts: {} }] })
+    //                 .then(function (response) {
+    //                     account = null;
+    //                     web3.eth.defaultAccount = null;
+    //                     toast.style.color = "#000000";
+    //                     toast.textContent = "Not connected to wallet";
+    //                     document.getElementById('connect-wallet').style.display = 'block';
+    //                     document.getElementById('disconnect-wallet').style.display = 'none';
+    //                 })
+    //                 .catch(function (error) {
+    //                     toast.style.color = "#ff0000";
+    //                     toast.textContent = error.message;
+    //                     console.error('Error disconnecting from wallet:', error);
+    //                 });
+    //         })
+    //         .catch(function (error) {
+    //             toast.style.color = "#ff0000";
+    //             toast.textContent = error;
+    //             console.error('Error getting wallet permissions:', error);
+    //         });
+    // } else {
+    //     toast.style.color = "#ff0000";
+    //     toast.textContent = "Please install MetaMask to use this dApp";
+    //     console.error('MetaMask not detected');
+    // }
+    account = null;
+    web3.eth.defaultAccount = null;
+    toast.style.color = "#000000";
+    toast.textContent = "Not connected to wallet";
+    document.getElementById('connect-wallet').style.display = 'block';
+    document.getElementById('disconnect-wallet').style.display = 'none';
 }
 
 async function buyLotteryTicket() {
+    if (web3 == null || account == null) {
+        toast.style.color = "#ff0000";
+        toast.textContent = "Please connect to a wallet first";
+        return undefined;
+    }
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
+    const gasPrice = Web3.utils.toWei(await web3.eth.getGasPrice(),"gwei") 
 
-    if (window.contract) {
-        try{
-            let gasPrice = BigInt(22000000000); // 22 Gwei
-            let maxPriorityFeePerGas = window.web3.utils.toWei('22', 'gwei'); // Convert from Gwei to Wei
-            let maxFeePerGas = gasPrice + BigInt(maxPriorityFeePerGas); 
-            let gasLimit = await window.contract.methods.buyLotteryToken().estimateGas({ from: window.account,value:window.web3.utils.toWei('0.01', 'ether') });
-            let transaction=await window.contract.methods.buyLotteryToken().send({ from: window.account,value:window.web3.utils.toWei('0.01', 'ether'),maxPriorityFeePerGas:maxPriorityFeePerGas, maxFeePerGas:maxFeePerGas, gasLimit:gasLimit });
-            console.log(transaction);
+    const gasLimit = await contract.methods.buyLotteryToken().estimateGas({
+        from: account,
+        value: web3.utils.toWei("0.01", "ether")
+    });
+    console.log({gasPrice,gasLimit})
+    contract.methods.buyLotteryToken().send({
+        from: account,
+        value: web3.utils.toWei("0.01", "ether"),
+        gasPrice: gasPrice,
+        gasLimit: gasLimit
+    })
+        .then(function (receipt) {
+            console.log(receipt);
             toast.style.color = "#000000";
-            toast.textContent = "Transaction completed";
-        }catch(error){
+            toast.textContent = "Transaction successful";
+            ListMyTickets();
+        })
+        .catch(function (error) {
+            console.error(error);
             toast.style.color = "#ff0000";
             toast.textContent = error.message;
-            console.error(error.message);
-        }
-   
-    } else {
-        toast.style.color = "#ff0000";
-        toast.textContent = "Please connect wallet to use this dApp";
-        console.error('Please connect wallet to use this dApp');
-    }
+        });
 
 
 }
+
+
+function ListMyTickets() {
+    console.log('Listing my tickets...')
+    if (web3 == null || account == null) {
+        toast.style.color = "#ff0000";
+        toast.textContent = "Please connect to a wallet first";
+        return undefined;
+    }
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
+    contract.methods.listMyTokens().call({ from: account })
+        .then(function (receipts) {
+            console.log(receipts);
+            tokenListView.innerHTML = "";           
+            for (let i = 0; i < receipts.length; i++) {
+                tokenListView.innerHTML += `<li>${receipts[i]}</li>`;
+            }
+        })
+        .catch(function (error) {
+            console.error(error);
+         
+        });
+}
+function previousWinner() {
+    if (web3 == null || account == null) {
+        toast.style.color = "#ff0000";
+        toast.textContent = "Please connect to a wallet first";
+        return undefined;
+    }
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
+    contract.methods.getWinner().call({ from: account })
+        .then(function (winner) {
+            if(!winner?.amount||winner?.amount==0){
+                previousWinnerView.innerHTML = "";           
+                previousWinnerView.innerHTML += `<p>No previous winner</p>`;
+                return;
+            }
+            const amountInEth = web3.utils.fromWei(winner.amount, 'ether');
+
+            previousWinnerView.innerHTML = "";           
+            previousWinnerView.innerHTML += `<li><b>Prize</b> ${amountInEth} ETH</li>`;
+            previousWinnerView.innerHTML += `<li><b>Wallet address</b> ${winner.userAddress}</li>`;
+            previousWinnerView.innerHTML += `<li><b>Token</b> ${winner.token}</li>`;
+        })
+        .catch(function (error) {
+            console.error(error);
+         
+        });
+
+}
+
+window.addEventListener('load', function () {
+    connectToWallet();
+})
 
