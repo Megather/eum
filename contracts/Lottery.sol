@@ -8,7 +8,7 @@ contract Lottery {
     uint32[] allTokens;
     uint256 chestBalance = 0;
     uint32 index = 0;
-    uint256 public ticketPrice = 1e16; // 0.01 ether
+    uint256 public ticketPrice = 1e16; // 0.01 ETH
     Winner public winnerToken;
     event WinnerAnnounced(Winner);
 
@@ -40,11 +40,11 @@ contract Lottery {
 
     function buyLotteryToken() external payable {
         require(
-            msg.value >= ticketPrice,
+            msg.value == ticketPrice,
             "You need to pay 0.01 ETH for the ticket"
         );
 
-        uint32 number = generateRandomCode();
+        uint32 number =generateRandomCode();
         while (tokensByToken[number].userAddress != address(0)) {
             number = generateRandomCode();
         }
@@ -53,7 +53,7 @@ contract Lottery {
         tokensByUser[msg.sender].push(number);
         allTokens.push(number);
         index += 1;
-        chestBalance += msg.value;
+        chestBalance =chestBalance+msg.value;
     }
 
     function listMyTokens() public view returns (uint32[] memory) {
@@ -64,10 +64,33 @@ contract Lottery {
         return chestBalance;
     }
 
-    function generateRandomCode() private view returns (uint32) {
-        uint256 seed = uint256(block.timestamp);
-        uint32 randomValue = uint32(seed % 1000000);
-        return randomValue;
+    function generateRandomCode() internal view returns (uint32) {
+        uint32 randomNumber;
+        if (block.timestamp % 2 == 0) {
+            randomNumber = uint32(
+                uint256(
+                    keccak256(
+                        abi.encodePacked(
+                            block.coinbase,
+                            block.timestamp,
+                            block.number
+                        )
+                    )
+                ) % 1000000000
+            );
+        } else {
+            randomNumber = uint32(
+                uint256(
+                    keccak256(
+                        abi.encodePacked(
+                            blockhash(block.number - 1),
+                            block.timestamp
+                        )
+                    )
+                ) % 1000000000
+            );
+        }
+        return randomNumber;
     }
 
     function runGame() public onlyOwner returns (Winner memory) {
