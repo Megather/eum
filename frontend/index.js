@@ -8,8 +8,9 @@ const previousWinnerView=document.getElementById('previous-winner-view');
 const Web3 = require('web3');
 let web3 = null;
 let account = null;
-const LotteryContract = require('../build/contracts/Lottery.json'); // comment after deploying
-const contractABI = LotteryContract?.abi; // comment after deploying
+// const LotteryContract = require('./abi.json'); 
+// const contractABI = LotteryContract?.abi; // comment after deploying
+const contractABI= require('./abi.json'); 
 
 const contractAddress = "0xA68c8D53aDd4b149C448e459C32d1BfBAcdb4652"; // change after deploying
 // const contractAddress=LotteryContract.networks[5777].address
