@@ -2,9 +2,10 @@
   "name": "frontend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+
   "scripts": {
-    "start": "parcel index.html --port=3030"
+    "start": "parcel index.html --port=3030",
+    "build": "parcel build index.html"
   },
   "author": "moasadi",
   "license": "ISC",
