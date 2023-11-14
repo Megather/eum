@@ -26,14 +26,8 @@ jobs:
           npm run build
 
 
-      #- name: Install Dependencies
-      #  run: ls && npm i
-
-      #- name: Build Project
-      #  run: npm run build
-
       - name: Build Dir
-        run: ls & pwd
+        run: cd frontend/dist/ && ls
 
 
 #  deploy:
