@@ -24,15 +24,11 @@ jobs:
           npm i
           npm run build
 
-        artifacts:
-        path:
-          - build/
-
-#      - name: Upload dist Directory For Deploy job
-#        uses: actions/upload-artifact@v3
-#        with:
-#           name: build_dir
-#           path: dist/
+      - name: Upload dist Directory For Deploy job
+        uses: actions/upload-artifact@v3
+        with:
+           name: build
+           path: build
 
   deploy:
     runs-on: ubuntu-latest
@@ -40,6 +36,13 @@ jobs:
     needs: build
 
     steps:
+
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          path: build/
 
       - name: print details
         run: |
