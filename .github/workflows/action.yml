@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout Repository
         uses: actions/checkout@v2
 
@@ -37,7 +38,6 @@ jobs:
 
     steps:
 
-
       - name: Download Build Artifact
         uses: actions/download-artifact@v2
         with:
@@ -50,7 +50,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
-
 
       - name: Upload and Delete Files from S3
         run: |
