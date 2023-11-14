@@ -20,13 +20,15 @@ jobs:
 
       - name: Install Dependencies & Build Project
         run: |
-          pwd && ls
           cd frontend/
           npm i
           npm run build
 
-      - name: Install Dependencies & Build Project
-        run: ls /frontend
+      - name: Upload dist Directory For Deploy job
+        uses: actions/upload-artifact@v3
+        with:
+           name: build_dir
+           path: |
 
   deploy:
     runs-on: ubuntu-latest
@@ -35,9 +37,9 @@ jobs:
 
     steps:
 
-      - name: Print Directory Contents
+      - shell: bash
         run: |
-          ls /home/runner/work/_temp
+          ls
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -51,5 +53,4 @@ jobs:
         run: |
           aws s3 sync dist/ s3://megather-front-develop/ --delete
 
-        if: success()  # Only run deployment if the build job was successful
 
