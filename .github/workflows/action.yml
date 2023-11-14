@@ -37,7 +37,7 @@ jobs:
 
       - name: Print Directory Contents
         run: |
-          ls /home/runner/work/eum/eum
+          ll
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
