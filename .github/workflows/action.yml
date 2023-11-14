@@ -43,8 +43,7 @@ jobs:
 
       - name: Print Directory Contents
         run: |
-          pwd
-          ls /home/runner/work/eum/eum
+          ls /home/runner/work/eum/eum/frontend
 
       - name: Upload and Delete Files from S3
         run: |
