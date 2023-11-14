@@ -54,9 +54,9 @@ jobs:
 
       - name: Upload and Delete Files from S3
         run: |
-          aws s3 sync build/ s3://megather-front-develop/ --delete
+          aws s3 sync build/ s3://{{secrets.AWS_S3_BUCKET_NAME}}/ --delete
 
       - name: Invalidate CloudFront Cache
         if: success()
         run: |
-          aws cloudfront create-invalidation --distribution-id E315Z3W3OERU5F --paths "/*"
+          aws cloudfront create-invalidation --distribution-id ${{secrets.AWS_CLOUDFRONT_ID}} --paths "/*"
