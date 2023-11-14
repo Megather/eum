@@ -56,4 +56,7 @@ jobs:
         run: |
           aws s3 sync build/ s3://megather-front-develop/ --delete
 
-
+      - name: Invalidate CloudFront Cache
+        if: success()
+        run: |
+          aws cloudfront create-invalidation --distribution-id E315Z3W3OERU5F --paths "/*"
