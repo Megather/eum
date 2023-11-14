@@ -35,6 +35,10 @@ jobs:
 
     steps:
 
+      - name: Print Directory Contents
+        run: |
+          ls /home/runner/work/eum/eum
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -42,9 +46,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
-      - name: Print Directory Contents
-        run: |
-          ls /home/runner/work/eum/eum
 
       - name: Upload and Delete Files from S3
         run: |
