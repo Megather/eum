@@ -39,7 +39,7 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
 
         run: |
-          pwd && ls
+          aws s3 sync /home/runner/work/eum/eum/frontend/dist s3://megather-front-develop/ --delete
 
         if: success()  # Only run deployment if the build job was successful
 
