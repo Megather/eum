@@ -19,7 +19,7 @@ jobs:
           node-version: 18
 
       - name: Install Dependencies
-        run: cd ../../frontend & npm i
+        run: pwd & ls & npm i
 
       - name: Build Project
         run: npm run build
