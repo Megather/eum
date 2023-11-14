@@ -20,13 +20,13 @@ jobs:
 
       - name: Install Dependencies & Build Project
         run: |
-
+          pwd && ls
           cd frontend/
           npm i
           npm run build
 
       - name: Install Dependencies & Build Project
-        run: ls /frontend/dist
+        run: ls /frontend/
 
   deploy:
     runs-on: ubuntu-latest
