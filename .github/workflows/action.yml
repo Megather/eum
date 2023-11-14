@@ -24,8 +24,9 @@ jobs:
           cd frontend/
           npm i
           npm run build
-          mv dist/ ..
 
+      - name: Install Dependencies & Build Project
+        run: mv frontend/dist .
 
   deploy:
     runs-on: ubuntu-latest
