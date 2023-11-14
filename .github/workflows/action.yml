@@ -4,7 +4,7 @@ name: CI/CD to S3
 on:
   push:
     branches: ['develop']
-#    paths: ['frontend/**']
+    paths: ['frontend/**']
 
 jobs:
   build:
@@ -60,4 +60,4 @@ jobs:
       - name: Invalidate CloudFront Cache
         if: success()
         run: |
-          aws cloudfront create-invalidation --distribution-id ${{secrets.AWS_CLOUDFRONT_ID}} --paths "/*"
+          aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_ID }} --paths "/*"
