@@ -24,7 +24,7 @@ jobs:
           cd frontend/
           npm i
           npm run build
-          ls
+          mv dist/ ..
 
 
   deploy:
