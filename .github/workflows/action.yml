@@ -37,7 +37,7 @@ jobs:
 
       - name: Print Directory Contents
         run: |
-          ll
+          ls /home/runner/work/_temp
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
