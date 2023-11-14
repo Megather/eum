@@ -26,10 +26,6 @@ jobs:
           npm run build
 
 
-      - name: Build Dir
-        run: cd frontend/dist/ && ls
-
-
   deploy:
     runs-on: ubuntu-latest
 
@@ -37,15 +33,18 @@ jobs:
 
     steps:
       - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ${{ secrets.AWS_REGION }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
 
       - name: Upload and Delete Files from S3
         run: |
           pwd && ls
+
+        if: success()  # Only run deployment if the build job was successful
+
 #aws s3 sync path/to/your/local/files s3://your-s3-bucket-name/ --delete
 
 #   steps:
