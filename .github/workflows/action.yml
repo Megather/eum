@@ -25,7 +25,7 @@ jobs:
           npm run build
 
         artifacts:
-        paths:
+        path:
           - build/
 
 #      - name: Upload dist Directory For Deploy job
