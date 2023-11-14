@@ -18,15 +18,19 @@ jobs:
         with:
           node-version: 18
 
-      - name: Find package.json
-        run: cd frontend/ && pwd && ls
+      - name: Install Dependencies & Build Project
+        run: |
+
+          cd frontend/ && ls
+          npm i
+          npm run build
 
 
-      - name: Install Dependencies
-        run: ls && npm i
+      #- name: Install Dependencies
+      #  run: ls && npm i
 
-      - name: Build Project
-        run: npm run build
+      #- name: Build Project
+      #  run: npm run build
 
       - name: Build Dir
         run: ls & pwd
