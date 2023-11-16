@@ -10,8 +10,9 @@ let web3 = null;
 let account = null;
 // const LotteryContract = require('./abi.json'); 
 // const contractABI = LotteryContract?.abi; // comment after deploying
-const contractABI= require('./abi.json'); 
-
+const contractABI= require('./abi.json').abi; 
+console.log("dddd")
+console.log(contractABI)
 const contractAddress = "0xA68c8D53aDd4b149C448e459C32d1BfBAcdb4652"; // change after deploying
 // const contractAddress=LotteryContract.networks[5777].address
 //click handlers
