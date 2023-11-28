@@ -3,16 +3,15 @@ import '@material/web/button/outlined-button.js';
 import '@material/web/checkbox/checkbox.js';
 
 const toast = document.getElementById('toast');
-const tokenListView=document.getElementById('token-list-view');
-const previousWinnerView=document.getElementById('previous-winner-view');
+const tokenListView = document.getElementById('token-list-view');
+const previousWinnerView = document.getElementById('previous-winner-view');
 const Web3 = require('web3');
 let web3 = null;
 let account = null;
 // const LotteryContract = require('./abi.json'); 
 // const contractABI = LotteryContract?.abi; // comment after deploying
-const contractABI= require('./abi.json').abi; 
-console.log("dddd")
-console.log(contractABI)
+
+const contractABI = require('./abi.json').abi;
 const contractAddress = "0xA68c8D53aDd4b149C448e459C32d1BfBAcdb4652"; // change after deploying
 // const contractAddress=LotteryContract.networks[5777].address
 //click handlers
@@ -103,13 +102,13 @@ async function buyLotteryTicket() {
         return undefined;
     }
     const contract = new web3.eth.Contract(contractABI, contractAddress);
-    const gasPrice = Web3.utils.toWei(await web3.eth.getGasPrice(),"gwei") 
+    const gasPrice = Web3.utils.toWei(await web3.eth.getGasPrice(), "gwei")
 
     const gasLimit = await contract.methods.buyLotteryToken().estimateGas({
         from: account,
         value: web3.utils.toWei("0.01", "ether")
     });
-    console.log({gasPrice,gasLimit})
+    // console.log({ gasPrice, gasLimit })
     contract.methods.buyLotteryToken().send({
         from: account,
         value: web3.utils.toWei("0.01", "ether"),
@@ -143,14 +142,14 @@ function ListMyTickets() {
     contract.methods.listMyTokens().call({ from: account })
         .then(function (receipts) {
             console.log(receipts);
-            tokenListView.innerHTML = "";           
+            tokenListView.innerHTML = "";
             for (let i = 0; i < receipts.length; i++) {
                 tokenListView.innerHTML += `<li>${receipts[i]}</li>`;
             }
         })
         .catch(function (error) {
             console.error(error);
-         
+
         });
 }
 function previousWinner() {
@@ -162,21 +161,21 @@ function previousWinner() {
     const contract = new web3.eth.Contract(contractABI, contractAddress);
     contract.methods.getWinner().call({ from: account })
         .then(function (winner) {
-            if(!winner?.amount||winner?.amount==0){
-                previousWinnerView.innerHTML = "";           
+            if (!winner?.amount || winner?.amount == 0) {
+                previousWinnerView.innerHTML = "";
                 previousWinnerView.innerHTML += `<p>No previous winner</p>`;
                 return;
             }
             const amountInEth = web3.utils.fromWei(winner.amount, 'ether');
 
-            previousWinnerView.innerHTML = "";           
+            previousWinnerView.innerHTML = "";
             previousWinnerView.innerHTML += `<li><b>Prize</b> ${amountInEth} ETH</li>`;
             previousWinnerView.innerHTML += `<li><b>Wallet address</b> ${winner.userAddress}</li>`;
             previousWinnerView.innerHTML += `<li><b>Token</b> ${winner.token}</li>`;
         })
         .catch(function (error) {
             console.error(error);
-         
+
         });
 
 }
@@ -185,3 +184,32 @@ window.addEventListener('load', function () {
     connectToWallet();
 })
 
+
+//Admin side of scripts
+let typed = '';
+document.addEventListener('keydown', function (e) {
+    typed += e.key;
+    if (typed.toLowerCase().includes('mega')) {
+        document.getElementById('run-game').style.display = 'block';
+        typed = '';
+    }
+});
+document.getElementById('run-game').addEventListener('click',async (e) => {
+    if (web3 == null || account == null) {
+        toast.style.color = "#ff0000";
+        toast.textContent = "Please connect to a wallet first";
+        return undefined;
+    }
+    const contract = new web3.eth.Contract(contractABI, contractAddress);
+    const gasPrice = Web3.utils.toWei(await web3.eth.getGasPrice(), "gwei")
+    const gasLimit = await contract.methods.runGame().estimateGas({
+        from: account,
+    });
+    contract.methods.runGame().send({ from: account ,gasPrice: gasPrice,gasLimit: gasLimit})
+        .then(function (receipt) {
+            previousWinner()
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+});
