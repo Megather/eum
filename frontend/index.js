@@ -106,12 +106,12 @@ async function buyLotteryTicket() {
 
     const gasLimit = await contract.methods.buyLotteryToken().estimateGas({
         from: account,
-        value: web3.utils.toWei("0.01", "ether")
+        value: web3.utils.toWei("0.001", "ether")
     });
     // console.log({ gasPrice, gasLimit })
     contract.methods.buyLotteryToken().send({
         from: account,
-        value: web3.utils.toWei("0.01", "ether"),
+        value: web3.utils.toWei("0.001", "ether"),
         gasPrice: gasPrice,
         gasLimit: gasLimit
     })
