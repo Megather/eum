@@ -8,7 +8,7 @@ contract Lottery {
     uint32[] allTokens;
     uint256 chestBalance = 0;
     uint32 index = 0;
-    uint256 public ticketPrice = 1e16; // 0.01 ETH
+    uint256 public ticketPrice = 1e15; // 0.01 ETH
     Winner public winnerToken;
     event WinnerAnnounced(Winner);
 
